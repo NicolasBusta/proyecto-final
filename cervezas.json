@@ -1,0 +1,31 @@
+[
+    {
+        "nombre": "Golden Ale",
+        "tipo" : "rubia"
+    },
+    {
+        "nombre": "Pale Ale",
+        "tipo" : "rubia"
+    },
+    {
+        "nombre": "Oktoberfest",
+        "tipo" : "rubia"
+    },
+    {
+        "nombre": "Scottish",
+        "tipo" : "roja"
+    },
+    {
+        "nombre": "Scottish",
+        "tipo" : "roja"
+    },
+    {
+        "nombre": "Porter",
+        "tipo" : "negra"
+    },
+    {
+        "nombre": "Porter",
+        "tipo" : "negra"
+    }
+
+]
