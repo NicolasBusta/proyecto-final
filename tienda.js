@@ -21,11 +21,11 @@ function RandomSugerencia(array) {
   return array[Math.floor(Math.random() * array.length)];
 }
 
-  var opcionRubia ="RUBIA PAPA!";
-  var opcionRoja ="ROJA PAPA!";
-  var opcionNegra ="NEGRA PAPA!";
-  var array1 = [opcionRubia, opcionRoja,opcionNegra];
-  var ValorFinal1 = RandomSugerencia(array1);
+  let opcionRubia ="RUBIA PAPA!";
+  let opcionRoja ="ROJA PAPA!";
+  let opcionNegra ="NEGRA PAPA!";
+  let array1 = [opcionRubia, opcionRoja,opcionNegra];
+  let ValorFinal1 = RandomSugerencia(array1);
 
 function cambiar() {
   document.getElementById("recomendacionParrafo").innerHTML= ValorFinal1;
@@ -40,6 +40,7 @@ function cambiar() {
 const addToShoppingCartButtons = document.querySelectorAll('.addToCart');
 addToShoppingCartButtons.forEach((addToCartButton) => {
   addToCartButton.addEventListener('click', addToCartClicked);
+  
 });
 
 const comprarButton = document.querySelector('.comprarButton');
@@ -50,17 +51,29 @@ const shoppingCartItemsContainer = document.querySelector(
 );
 
 function addToCartClicked(event) {
+  Swal.fire({
+    position: 'top-end',
+    width: 400,
+    icon: 'success',
+    title: 'Se agrego al carrito',
+    background: 'black',
+    color: 'white',
+    showConfirmButton: false,
+    timer: 1000
+  });
   const button = event.target;
   const item = button.closest('.item');
 
   const itemTitle = item.querySelector('.item-title').textContent;
   const itemPrice = item.querySelector('.item-price').textContent;
   const itemImage = item.querySelector('.item-image').src;
-
-  addItemToShoppingCart(itemTitle, itemPrice, itemImage);
+  const itemId = item.querySelector('.item-button').getAttribute('data-id');
+  
+  addItemToShoppingCart(itemTitle, itemPrice, itemImage,itemId);
+  
 }
 
-function addItemToShoppingCart(itemTitle, itemPrice, itemImage) {
+function addItemToShoppingCart(itemTitle, itemPrice, itemImage,itemId) {
   const elementsTitle = shoppingCartItemsContainer.getElementsByClassName(
     'shoppingCartItemTitle'
   );
@@ -113,6 +126,7 @@ function addItemToShoppingCart(itemTitle, itemPrice, itemImage) {
     .addEventListener('change', quantityChanged);
 
   updateShoppingCartTotal();
+  this.guardarProductosLocalStorage(itemId);
 }
 
 function updateShoppingCartTotal() {
@@ -137,12 +151,26 @@ function updateShoppingCartTotal() {
     total = total + shoppingCartItemPrice * shoppingCartItemQuantity;
   });
   shoppingCartTotal.innerHTML = `${total.toFixed(2)}`;
+  
 }
 
 function removeShoppingCartItem(event) {
+  Swal.fire({
+    position: 'top-end',
+    width: 400,
+    icon: 'warning',
+    title: 'Se retiro del carrito al carrito',
+    background: 'black',
+    color: 'white',
+    showConfirmButton: false,
+    timer: 1000
+  });
   const buttonClicked = event.target;
   buttonClicked.closest('.shoppingCartItem').remove();
   updateShoppingCartTotal();
+
+ // vaciarLocalStorage();
+ eliminarProductoLocalStorage(itemId);
 }
 
 function quantityChanged(event) {
@@ -163,3 +191,50 @@ fetch("cervezas.json")
 }).then((cervezas)=>{
     console.log(cervezas);
 });
+
+//localstorage:
+
+//Almacenar en el LS
+function guardarProductosLocalStorage(itemId){
+  let productos;
+  //Toma valor de un arreglo con datos del LS
+  productos = this.obtenerProductosLocalStorage();
+  //Agregar el producto al carrito
+  productos.push(itemId);
+  
+  //Agregamos al LS
+  localStorage.setItem('productos', JSON.stringify(productos));
+}
+
+//Comprobar que hay elementos en el LS
+function obtenerProductosLocalStorage(){
+  let productoLS;
+
+  //Comprobar si hay algo en LS
+  if(localStorage.getItem('productos') === null){
+      productoLS = [];
+  }
+  else {
+      productoLS = JSON.parse(localStorage.getItem('productos'));
+  }
+  return productoLS;
+};
+
+ //Eliminar producto por ID del LS
+ function eliminarProductoLocalStorage(itemId){
+  let productosLS;
+  //Obtenemos el arreglo de productos
+  productosLS = this.obtenerProductosLocalStorage();
+  //Comparar el id del producto borrado con LS
+  productosLS.forEach(function(productoLS, index){
+      if(productoLS.id === itemId){
+          productosLS.splice(index, 1);
+      }
+  });
+
+  //Añadimos el arreglo actual al LS
+  localStorage.setItem('productos', JSON.stringify(productosLS));
+}
+/*function vaciarLocalStorage(){
+  localStorage.clear();
+}*/
